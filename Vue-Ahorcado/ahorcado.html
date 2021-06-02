@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Document</title>  
+</head>
+<style type="text/css">
+    
+    button{
+        margin-left: 10px;
+        
+    }
+    .cuadro{
+        align-items: center;
+        width: 30px;
+        margin-left: 4px;
+        border:4px solid #CC6600;
+        border-radius: 5px;
+        background: white;
+        
+        height: 30px;
+        text-align: center;
+        padding-top: 3px;
+        padding-left: 3px;
+        font-size: 1em;
+    }
+</style>
+<body>
+    <div id="app" class="container-fluid">
+        
+        <div claass="row">
+            <div v-if="win" class="tex-center">
+                <embed src="win.mp3" autostarty="true" loop="loop" width="0" height="0">
+                <img src="win2.gif" alt="">
+        
+            </div>
+            <div v-if="lost" class="tex-center">
+                <embed src="super-smash-bros-melee-announcer-failure.mp3" autostarty="true" loop="loop" width="0" height="0">
+                <img src="3ksq33.png" alt="">
+        
+            </div>
+        
+            <div class="container text-center">
+            <span>{{palabra_generada}}</span>
+            <span v-for="(letra,index) in letras"> 
+                <button v-on:click="comparar(letra,index)" v-bind:disabled="botones[index]">{{letra}}</button>
+            </span>
+        </div>
+        <br>    
+        
+        <div >
+            <label for="">Aciertos</label>
+            <input type="text" class="form-control" v-model="contador_aciertos">
+            <label for="">Errores</label>
+            <input type="text" class="form-control" v-model="contador_errores">
+            
+            
+            <button v-on:click="generarRandom">New Game</button>
+        </div>
+        
+        <div>
+            <ul>
+                <button v-for="item in palabra_es" type="button" class="btn btn-primary cuadro">
+                    <span>
+                        {{item}}
+                    </span>
+                </button>
+            </ul>
+        </div>
+
+        </div>
+    </div>
+    
+    
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>   
+<script>
+    var app = new Vue({
+        el:'#app',
+        data:{
+            game:true,
+            win:false,
+            lost:false,
+            contador_aciertos:0,
+            contador_errores:0,
+            aleatorio:0,
+            palabra_es:[],
+            botones:[],
+            boton_color:[],
+            letras:"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            palabras:["placa","ram","vram","cpu","disco",]
+        },
+        methods: {
+            generarRandom:function(){
+                this.game= true
+                this.win=false
+                this.lost=false
+                this.palabra_es= []
+                this.contador_aciertos = 0
+                this.contador_errores = 0
+                this.botones = []
+                this.boton_color = []
+                this.aleatorio = Math.floor(Math.random()*this.palabras.length)
+                for(var i =0;i<this.palabras[this.aleatorio].length;i++){
+                    this.palabra_es.push('')
+                }
+                return this.aleatorio
+            },
+            comparar:function(caracter,posicion){
+                if(this.game){
+                    contadorFlag=0
+                    this.botones[posicion]=true
+                    for(i=0;i<=this.palabra_generada.length;i++){
+                        if(caracter.toLowerCase()==this.palabra_generada[i]){
+                            this.palabra_es[i]=caracter
+                            contadorFlag++
+                            this.contador_aciertos++
+                        }
+                    
+                    }
+                    if(contadorFlag==0){
+                        this.contador_errores++   
+                    }
+                    if(this.contador_aciertos==this.palabra_generada.length){
+                        this.win = true
+                        this.game = false
+                    }
+                    if(this.contador_errores==4){
+                        this.lost = true
+                        this.game = false
+                    }
+                    
+                }
+            }
+        },
+        computed:{
+            palabra_generada:function(){
+                return this.palabras[this.aleatorio]
+            }
+        },
+        created:function() {
+            this.generarRandom()
+        },
+    })
+</script>
+</html>
